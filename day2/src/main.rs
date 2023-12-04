@@ -63,7 +63,6 @@ fn parse_games(file_path: &Path) -> io::Result<Vec<Game>> {
 
 fn main() {
     let games = parse_games(Path::new("input.txt")).unwrap();
-    //println!("{:?}", games);
 
     let max_val = Draw{
         blue: 14,
