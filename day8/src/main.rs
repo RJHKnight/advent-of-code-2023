@@ -34,7 +34,7 @@ fn main() {
             };
 
             if next.ends_with("Z") {
-                println!("Found Z for {}!", key);
+                //println!("Found Z for {}!", key);
                 let steps_vec = steps_per_value.entry(key.to_owned()).or_insert(Vec::new());
                 steps_vec.push(steps);
             }
@@ -62,7 +62,11 @@ fn main() {
     let mut lowest_common_multiple = 1;
     for value in steps_vec.iter() {
         lowest_common_multiple = lcm(lowest_common_multiple, *value);
-        println!("Lowest common multiple: {}", lowest_common_multiple)
+
+        // Format value using comma delim for thousands
+         let formatted_value = format!("{:?}", value);
+        
+        println!("Lowest common multiple up to {} = {}", formatted_value, lowest_common_multiple)
     }
 
     println!("Lowest common multiple: {}", lowest_common_multiple);
