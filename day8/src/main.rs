@@ -55,7 +55,7 @@ fn main() {
     println!("Steps per value: {:?}", steps_per_value);
 
     // Collect first element of each value in steps_per_value
-    let mut steps_vec: Vec<u128> = steps_per_value.values().map(|v| v[0]).collect();
+    let steps_vec: Vec<u128> = steps_per_value.values().map(|v| v[0]).collect();
 
     // println!("Steps per value: {:?}", steps_per_value);
     // Find the lowest value that is a common multiple of all values in steps_per_value
