@@ -23,3 +23,7 @@ cargo init
 
 # Copy the .gitignore file
 cp ../day1/.gitignore .
+
+# Create input and input_test files
+touch input.txt
+touch input_test.txt
