@@ -1,0 +1,13 @@
+Cycle: 87, Score: 104520
+Cycle: 88, Score: 104535
+Cycle: 89, Score: 104528
+Cycle: 90, Score: 104533
+Cycle: 91, Score: 104537
+Cycle: 92, Score: 104545
+Cycle: 93, Score: 104544
+Cycle: 94, Score: 104551
+Cycle: 95, Score: 104519
+
+Cycle of period 9, starting at 87
+
+1,000,000,000
