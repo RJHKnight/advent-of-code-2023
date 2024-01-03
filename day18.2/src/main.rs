@@ -61,7 +61,36 @@ fn get_lines(instructions: &Vec<Instruction>) -> Vec<Line> {
     lines
 }
 
-fn get_area(lines: &Vec<Line>, start : Point) -> i64 {
+
+fn get_area_greens(lines: &Vec<Line>) -> i64 {
+
+    //println!("Lines: {:?}", lines);
+
+    // Find lowest values of x and y across all lines
+    let mut x_min = 0;
+    let mut y_min = 0;
+    
+    for line in lines {
+        x_min = x_min.min(line.start.x.min(line.end.x));
+        y_min = y_min.min(line.start.y.min(line.end.y));
+    }
+
+    let mut sum = 0;
+    let mut perimiter = 0;
+
+    for line in lines {
+        sum += (((line.end.y - y_min) - (line.start.y - y_min)) 
+            * ((line.end.x - x_min) + (line.start.x - x_min)));
+
+        perimiter += (line.end.x - line.start.x).abs() + (line.end.y - line.start.y).abs() ;
+    }
+
+    1 + (sum.abs() + perimiter) / 2
+}
+
+
+
+fn get_area_floodfill(lines: &Vec<Line>) -> i64 {
 
     // Find lowest values of x and y across all lines
     let mut x_min = 0;
@@ -76,6 +105,16 @@ fn get_area(lines: &Vec<Line>, start : Point) -> i64 {
         y_max = y_max.max(line.start.y.max(line.end.y));
     }
 
+    x_max += 1;
+    y_max += 1;
+    y_min -= 1;
+    x_min -= 1;
+
+    let start = Point{x: x_min, y: y_min};
+    let surrounding_area = ((x_max - x_min) + 1)* ((y_max - y_min)+1);
+
+    println!("x_min: {}, x_max: {}, y_min: {}, y_max: {}", x_min, x_max, y_min, y_max);
+
     let mut stack = Vec::new();
     let mut visited = HashSet::new();
 
@@ -88,12 +127,14 @@ fn get_area(lines: &Vec<Line>, start : Point) -> i64 {
     stack.push(start.shift(0, 1));
     stack.push(start.shift(0, -1));
 
+    let mut counter = 0;
+
     while !stack.is_empty() {
         let point = stack.pop().unwrap();
 
-        // If point is outside the bounds, panic
+        // If point is outside the bounds of the grid, skip it
         if point.x < x_min || point.x > x_max || point.y < y_min || point.y > y_max {
-            panic!("Point outside bounds");
+            continue;
         }
 
         if visited.contains(&point) {
@@ -104,6 +145,11 @@ fn get_area(lines: &Vec<Line>, start : Point) -> i64 {
             continue;
         }
 
+        counter += 1;
+        if counter % 100000 == 0 {
+            println!("Counter: {}, stack size: {}", counter, stack.len());
+        }
+
         visited.insert(point);
         count += 1;
         stack.push(point.shift(1, 0));
@@ -112,25 +158,9 @@ fn get_area(lines: &Vec<Line>, start : Point) -> i64 {
         stack.push(point.shift(0, -1));
     }
 
-    // Add on the values of the lines
-    for line in lines {
-        let x_min = line.start.x.min(line.end.x);
-        let x_max = line.start.x.max(line.end.x);
-        let y_min = line.start.y.min(line.end.y);
-        let y_max = line.start.y.max(line.end.y);
+    println!("Count: {}, surrounding area: {}", count, surrounding_area);
 
-        for x in x_min..=x_max {
-            for y in y_min..=y_max {
-                let point = Point { x, y };
-                if visited.contains(&point) {
-                    continue;
-                }
-                count += 1;
-                visited.insert(point);
-            }
-        }
-    }
-    count
+    surrounding_area - count
 
 }
 
@@ -211,13 +241,13 @@ fn create_jpeg(lines: &Vec<Line>) {
 }
 
 fn main() {
-    let input = include_str!("../input_test.txt");
+    let input = include_str!("../input.txt");
     let instructions = parse_instructions_step2(input);
     let lines = get_lines(&instructions);
     //create_jpeg(&lines);
     
     // let area = get_area(&lines, Point { x: 0, y: -1 });
-    let area = get_area(&lines, Point { x: 1, y: -1 });
+    let area = get_area_greens(&lines);
     // let area = get_area(&lines, Point { x: 1, y: 0 });
     // let area = get_area(&lines, Point { x: -1, y: 0 });
     println!("Area: {}", area);
